@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,17 +10,19 @@ import (
 	"github.com/brian-baugher/qurl/internal/url/db"
 )
 
-var Mappings *sql.DB
+
 
 func main() {
-	Mappings, err := db.GetConnection()
+	db, err := db.GetMappingsConnection()
 	if err != nil {
 		log.Panicf("error getting connection\n %+v", err)
 	}
-	defer Mappings.Close()
-	
+
+	env := &url.Env{Mappings: db}
+	defer env.Mappings.Close()
+
 	fmt.Println("connected")
-	http.HandleFunc("POST /url", url.Create)
+	http.HandleFunc("POST /url", env.Create)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 	print.Print("after listen")
 }
