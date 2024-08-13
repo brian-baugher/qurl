@@ -13,13 +13,14 @@ import (
 )
 
 type CreateRequest struct {
-	Url string `json:"url"`
+	LongUrl string `json:"long_url"`
 }
 
 type Env struct {
 	Mappings *sql.DB
 }
 
+//TODO: logging
 func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 	var createRequest CreateRequest
 	err := json.NewDecoder(req.Body).Decode(&createRequest)
@@ -27,13 +28,16 @@ func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Could not decode request body", http.StatusBadRequest)
 		return
 	}
+	//TODO: check URL for validity
 
-	hash := getHash(createRequest.Url)
+	hash := getHash(createRequest.LongUrl)
 	fmt.Printf("hash %s\n", hash)
 
 	fmt.Printf("create req: %+v\n", createRequest)
+	//TODO: maybe check for duplicated here, not sure if we should just do nothing or make new
+	// depends if we're scared of collisions
 	id, err := db.CreateMapping(&db.CreateMappingRequest{
-		LongUrl:  createRequest.Url,
+		LongUrl:  createRequest.LongUrl,
 		ShortUrl: hash,
 	},
 		env.Mappings,

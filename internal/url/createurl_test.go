@@ -10,7 +10,7 @@ import (
 
 func TestCreate(t *testing.T) {
 	createRequest := CreateRequest{
-		Url: "test url",
+		LongUrl: "test url",
 	}
 	createRequestJson, err := json.Marshal(createRequest)
 	if err != nil {
@@ -19,7 +19,7 @@ func TestCreate(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/url", bytes.NewBuffer(createRequestJson))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
-	Create(w, req)
+	Create(w, req) //TODO: mock and fix
 	if w.Code != http.StatusOK {
 		t.Errorf("Status not ok, got %d", w.Code)
 	}
