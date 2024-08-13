@@ -1,7 +1,9 @@
 package url
 
 import (
+	"crypto/sha1"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -25,10 +27,14 @@ func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Could not decode request body", http.StatusBadRequest)
 		return
 	}
+
+	hash := getHash(createRequest.Url)
+	fmt.Printf("hash %s\n", hash)
+
 	fmt.Printf("create req: %+v", createRequest)
 	id, err := db.CreateMapping(&db.CreateMappingRequest{
 		LongUrl:  createRequest.Url,
-		ShortUrl: "test/1",
+		ShortUrl: hash,
 	},
 		env.Mappings,
 	)
@@ -37,4 +43,12 @@ func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	log.Printf("Created entry with id %d", id)
+}
+
+func getHash(s string) string {
+	hasher := sha1.New()
+	hasher.Write([]byte(s))
+	sum := hasher.Sum(nil)
+	sum_string := hex.EncodeToString(sum)[0:7]
+	return sum_string
 }
