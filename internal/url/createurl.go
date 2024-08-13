@@ -31,7 +31,7 @@ func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 	hash := getHash(createRequest.Url)
 	fmt.Printf("hash %s\n", hash)
 
-	fmt.Printf("create req: %+v", createRequest)
+	fmt.Printf("create req: %+v\n", createRequest)
 	id, err := db.CreateMapping(&db.CreateMappingRequest{
 		LongUrl:  createRequest.Url,
 		ShortUrl: hash,
