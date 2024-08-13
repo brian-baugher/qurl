@@ -23,6 +23,7 @@ func main() {
 
 	fmt.Println("connected")
 	http.HandleFunc("POST /url", env.Create)
+	http.HandleFunc("GET /{short_url}", env.GetLongUrl)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 	print.Print("after listen")
 }
