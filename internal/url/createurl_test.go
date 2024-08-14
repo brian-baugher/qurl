@@ -19,6 +19,7 @@ func TestCreate(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/url", bytes.NewBuffer(createRequestJson))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
+	env := Env{}
 	Create(w, req) //TODO: mock and fix
 	if w.Code != http.StatusOK {
 		t.Errorf("Status not ok, got %d", w.Code)

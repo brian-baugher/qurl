@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/brian-baugher/qurl/internal/url/db"
 )
@@ -28,7 +29,10 @@ func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Could not decode request body", http.StatusBadRequest)
 		return
 	}
-	//TODO: check URL for validity
+	if !isUrl(createRequest.LongUrl) {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
 
 	hash := getHash(createRequest.LongUrl)
 	fmt.Printf("hash %s\n", hash)
@@ -55,4 +59,10 @@ func getHash(s string) string {
 	sum := hasher.Sum(nil)
 	sum_string := hex.EncodeToString(sum)[0:7]
 	return sum_string
+}
+
+func isUrl(str string) bool {
+	fmt.Printf("url: %s\n", str)
+    u, err := url.Parse(str)
+    return err == nil && u.Scheme != "" && u.Host != ""
 }
