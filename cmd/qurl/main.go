@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/brian-baugher/qurl/internal/print"
 	"github.com/brian-baugher/qurl/internal/url"
 	"github.com/brian-baugher/qurl/internal/url/db"
 )
@@ -25,5 +24,4 @@ func main() {
 	http.HandleFunc("POST /url", env.Create)
 	http.HandleFunc("GET /{short_url}", env.GetLongUrl)
 	log.Fatal(http.ListenAndServe(":8000", nil))
-	print.Print("after listen")
 }
