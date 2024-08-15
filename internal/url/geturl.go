@@ -20,5 +20,5 @@ func (env *Env) GetLongUrl(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Error getting long url", http.StatusInternalServerError)
 	}
 	fmt.Printf("long_url found: %s\n", long_url)
-	//http.Redirect(w, req, long_url, http.StatusSeeOther)
+	http.Redirect(w, req, long_url, http.StatusSeeOther)
 }
