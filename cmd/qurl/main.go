@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/brian-baugher/qurl/internal/template"
 	"github.com/brian-baugher/qurl/internal/url"
 	"github.com/brian-baugher/qurl/internal/url/db"
 )
@@ -21,7 +22,8 @@ func main() {
 	defer env.Mappings.Close()
 
 	fmt.Println("connected")
+	http.HandleFunc("GET /", template.Index)
 	http.HandleFunc("POST /url", env.Create)
-	http.HandleFunc("GET /{short_url}", env.GetLongUrl)
+	http.HandleFunc("GET /u/{short_url}", env.GetLongUrl)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
