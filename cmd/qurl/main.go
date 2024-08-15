@@ -10,8 +10,6 @@ import (
 	"github.com/brian-baugher/qurl/internal/url/db"
 )
 
-
-
 func main() {
 	db, err := db.GetMappingsConnection()
 	if err != nil {
@@ -24,6 +22,6 @@ func main() {
 	fmt.Println("connected")
 	http.HandleFunc("GET /", template.Index)
 	http.HandleFunc("POST /url", env.Create)
-	http.HandleFunc("GET /u/{short_url}", env.GetLongUrl)
+	http.HandleFunc("GET /{short_url}", env.GetLongUrl)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
