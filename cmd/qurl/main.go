@@ -11,14 +11,13 @@ import (
 )
 
 func main() {
-	db, err := db.GetMappingsConnection()
+	store, err := db.NewMappingStore()
 	if err != nil {
 		log.Panicf("error getting connection\n %+v", err)
 	}
 
-	env := &url.Env{Mappings: db}
-	defer env.Mappings.Close()
-
+	env := &url.Env{MappingStore: *store}
+	defer store.Db.Close()
 	fmt.Println("connected")
 	http.HandleFunc("GET /", template.Index)
 	http.HandleFunc("POST /url", env.Create)

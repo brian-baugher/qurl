@@ -2,7 +2,6 @@ package url
 
 import (
 	"crypto/sha1"
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -18,10 +17,16 @@ type CreateRequest struct {
 }
 
 type Env struct {
-	Mappings *sql.DB
+	MappingStore MappingStore
 }
 
-//TODO: logging
+type MappingStore interface {
+	CreateMapping(req *db.CreateMappingRequest) (int64, error)
+	GetShortUrl(longUrl string) (string, error)
+	GetLongUrl(shortUrl string) (string, error)
+}
+
+// TODO: logging
 func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 	var createRequest CreateRequest
 	err := json.NewDecoder(req.Body).Decode(&createRequest)
@@ -40,12 +45,10 @@ func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 	fmt.Printf("create req: %+v\n", createRequest)
 	//TODO: maybe check for duplicated here, not sure if we should just do nothing or make new
 	// depends if we're scared of collisions
-	id, err := db.CreateMapping(&db.CreateMappingRequest{
+	id, err := env.MappingStore.CreateMapping(&db.CreateMappingRequest{
 		LongUrl:  createRequest.LongUrl,
 		ShortUrl: hash,
-	},
-		env.Mappings,
-	)
+	})
 	if err != nil {
 		http.Error(w, "Error inserting into DB", http.StatusInternalServerError)
 		return
@@ -63,6 +66,6 @@ func getHash(s string) string {
 
 func isUrl(str string) bool {
 	fmt.Printf("url: %s\n", str)
-    u, err := url.Parse(str)
-    return err == nil && u.Scheme != "" && u.Host != ""
+	u, err := url.Parse(str)
+	return err == nil && u.Scheme != "" && u.Host != ""
 }
