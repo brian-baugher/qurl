@@ -39,15 +39,15 @@ func TestCreate(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/url", bytes.NewBuffer(createRequestJson))
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
-		env := Env{MappingStore: mocks.MockMappingStore{Mappings: make(map[string]string)}}
+		mappings := make(map[string]string)
+		env := Env{MappingStore: mocks.MockMappingStore{Mappings: mappings}}
 		env.Create(w, req)
 		if w.Code != http.StatusOK{
 			t.Errorf("Error rec'd, got %d", w.Code)
 		}
-		short_url, err := env.MappingStore.GetShortUrl("https://test.com")
-		if err != nil {
-			t.Errorf("Error inserting %+v", err)
+		long_url := mappings["ba1598f"]
+		if long_url != "https://test.com"{
+			t.Error("not inserted into mappings with correct hash")
 		}
-		t.Logf("short url: %s", short_url)
 	})
 }
