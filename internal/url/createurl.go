@@ -3,8 +3,8 @@ package url
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"net/url"
@@ -28,25 +28,23 @@ type MappingStore interface {
 
 // TODO: logging
 func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
-	var createRequest CreateRequest
-	err := json.NewDecoder(req.Body).Decode(&createRequest)
-	if err != nil {
-		http.Error(w, "Could not decode request body", http.StatusBadRequest)
+	longUrl := req.FormValue("long_url")
+	if longUrl == "" {
+		http.Error(w, "No value for long_url", http.StatusBadRequest)
 		return
 	}
-	if !isUrl(createRequest.LongUrl) {
+	if !isUrl(longUrl) {
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
 		return
 	}
 
-	hash := getHash(createRequest.LongUrl)
+	hash := getHash(longUrl)
 	fmt.Printf("hash %s\n", hash)
 
-	fmt.Printf("create req: %+v\n", createRequest)
 	//TODO: maybe check for duplicated here, not sure if we should just do nothing or make new
 	// depends if we're scared of collisions
 	id, err := env.MappingStore.CreateMapping(&db.CreateMappingRequest{
-		LongUrl:  createRequest.LongUrl,
+		LongUrl:  longUrl,
 		ShortUrl: hash,
 	})
 	if err != nil {
@@ -54,6 +52,8 @@ func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	log.Printf("Created entry with id %d", id)
+	tmpl, _ := template.ParseFiles("internal/template/create.html")
+	tmpl.Execute(w, "")
 }
 
 func getHash(s string) string {

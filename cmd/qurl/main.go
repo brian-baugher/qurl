@@ -20,7 +20,7 @@ func main() {
 	defer store.Db.Close()
 	fmt.Println("connected")
 	http.HandleFunc("GET /", template.Index)
-	http.HandleFunc("POST /url", env.Create)
+	http.HandleFunc("POST /create", env.Create)
 	http.HandleFunc("GET /{short_url}", env.GetLongUrl)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
