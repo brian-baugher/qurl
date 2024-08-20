@@ -10,11 +10,10 @@ type MockMappingStore struct {
 	Mappings map[string]string
 }
 
-func (m MockMappingStore) CreateMapping(req *db.CreateMappingRequest) (int64, error){
+func (m MockMappingStore) CreateMapping(req *db.CreateMappingRequest) (int64, error) {
 	m.Mappings[req.ShortUrl] = req.LongUrl
 	return 1, nil
 }
-
 
 func (m MockMappingStore) GetShortUrl(longUrl string) (string, error) {
 	keys := make([]string, 0, len(m.Mappings))

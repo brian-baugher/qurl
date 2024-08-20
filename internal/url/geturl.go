@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-//TODO: logging
+// TODO: logging
 func (env *Env) GetLongUrl(w http.ResponseWriter, req *http.Request) {
 	short_url := req.PathValue("short_url")
 	if short_url == "" {
