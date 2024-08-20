@@ -45,8 +45,6 @@ func (env *Env) Create(w http.ResponseWriter, req *http.Request) {
 	hash := getHash(longUrl)
 	fmt.Printf("hash %s\n", hash)
 
-	//TODO: maybe check for duplicated here, not sure if we should just do nothing or make new
-	// depends if we're scared of collisions
 	_, err := env.MappingStore.GetLongUrl(hash)
 	if err == nil { // only nil if url already exists
 		log.Print("URL already exists")

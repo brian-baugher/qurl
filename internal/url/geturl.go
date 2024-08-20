@@ -9,7 +9,7 @@ import (
 func (env *Env) GetLongUrl(w http.ResponseWriter, req *http.Request) {
 	short_url := req.PathValue("short_url")
 	if short_url == "" {
-		//TODO: maybe just redirect to home or 404 on error
+		//TODO: maybe change status because this redirects weird
 		http.Redirect(w, req, "/", http.StatusBadRequest)
 		return
 	}

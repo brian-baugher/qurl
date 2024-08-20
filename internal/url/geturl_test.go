@@ -39,5 +39,5 @@ func TestGet(t *testing.T) {
 			t.Errorf("wrong redirect, got location %s", w.Result().Header.Get("Location"))
 		}
 	})
-	//TODO test/change functionality of no url found
+	//TODO test functionality of no url found
 }
