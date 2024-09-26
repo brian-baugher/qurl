@@ -7,8 +7,11 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+type MappingStore struct {
+	Db *sql.DB
+}
 
-func GetMappingsConnection() (*sql.DB ,error) {
+func NewMappingStore() (*MappingStore, error) {
 	// Capture connection properties.
 	cfg := mysql.Config{
 		User:                 os.Getenv("DBUSER"),
@@ -21,13 +24,13 @@ func GetMappingsConnection() (*sql.DB ,error) {
 	// Get a database handle.
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 
-	return db, nil
+	return &MappingStore{Db: db}, nil
 }

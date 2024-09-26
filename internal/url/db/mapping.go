@@ -1,16 +1,14 @@
 package db
 
-import "database/sql"
-
 type CreateMappingRequest struct {
-	LongUrl string `json:"long_url"`
+	LongUrl  string `json:"long_url"`
 	ShortUrl string `json:"short_url"`
 }
 
-//TODO: logging
-func CreateMapping(req *CreateMappingRequest, db *sql.DB) (int64, error) {
-	res, err := db.Exec("INSERT INTO mapping (long_url, short_url) VALUES (?, ?)", req.LongUrl, req.ShortUrl)
-	if err != nil{
+// TODO: logging
+func (m MappingStore) CreateMapping(req *CreateMappingRequest) (int64, error) {
+	res, err := m.Db.Exec("INSERT INTO mapping (long_url, short_url) VALUES (?, ?)", req.LongUrl, req.ShortUrl)
+	if err != nil {
 		return 0, err
 	}
 	id, err := res.LastInsertId()
@@ -20,9 +18,9 @@ func CreateMapping(req *CreateMappingRequest, db *sql.DB) (int64, error) {
 	return id, nil
 }
 
-func GetShortUrl(longUrl string, db *sql.DB) (string, error){
+func (m MappingStore) GetShortUrl(longUrl string) (string, error) {
 	var shortUrl string
-	res := db.QueryRow("SELECT short_url FROM mapping WHERE long_url=?", longUrl)
+	res := m.Db.QueryRow("SELECT short_url FROM mapping WHERE long_url=?", longUrl)
 	err := res.Scan(&shortUrl)
 	if err != nil {
 		return "", err
@@ -30,9 +28,9 @@ func GetShortUrl(longUrl string, db *sql.DB) (string, error){
 	return shortUrl, nil
 }
 
-func GetLongUrl(shortUrl string, db *sql.DB) (string, error){
+func (m MappingStore) GetLongUrl(shortUrl string) (string, error) {
 	var longUrl string
-	res := db.QueryRow("SELECT long_url FROM mapping WHERE short_url=?", shortUrl)
+	res := m.Db.QueryRow("SELECT long_url FROM mapping WHERE short_url=?", shortUrl)
 	err := res.Scan(&longUrl)
 	if err != nil {
 		return "", err
